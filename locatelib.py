@@ -87,7 +87,7 @@ def find_bin_mask_hsv(image: np.ndarray) -> np.ndarray:
     return bin_image
 
 def get_coords(bin_image: np.ndarray, x_size_mm: int, y_size_mm: int) -> tuple[list, list]:
-    """Get center coordinates of objects in a binary mask
+    """Get center coordinates (in mm, on paper) of objects in a binary mask
 
     Args:
         bin_image (np.ndarray): Binary mask
@@ -120,6 +120,29 @@ def get_coords(bin_image: np.ndarray, x_size_mm: int, y_size_mm: int) -> tuple[l
                 
     return centers, frames
 
+def get_robot_coords(coords) -> list:
+    """PLEASE CHANGE THIS FUNCTION FOR YOUR NEEDS
+    Converts paper coords to robot coords
+
+    Args:
+        coords (list): Paper coords
+
+    Returns:
+        list: Robot coords
+    """
+    offset_x = -143
+    offset_y = 300
+    
+    robot_coords = []
+    for c in coords:
+        x_r = c[0] + offset_x
+        y_r = c[1] + offset_y
+        
+        x_r, y_r = -y_r, x_r
+        robot_coords.append((x_r, y_r))
+    
+    return robot_coords
+
 if __name__ == '__main__':
     aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
     back_image = cv2.imread('bg.png')
@@ -131,7 +154,8 @@ if __name__ == '__main__':
             cv2.imshow('image', image)
         else:
             bin_mask = find_bin_mask_difference(straight_image, back_image)
-            coords, _ = get_coords(bin_mask, 280, 195)
+            coords, _ = get_coords(bin_mask, 287, 200)
+            coords = get_robot_coords(coords)
             print(coords)
             cv2.imshow('image', bin_mask)
     
