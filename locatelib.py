@@ -108,13 +108,13 @@ def get_coords(bin_image: np.ndarray, x_size_mm: int, y_size_mm: int) -> tuple[l
             if area > 1000:
                 x, y, w, h = cv2.boundingRect(c)
                 
-                frames.append((x, y, w, h))
-                
                 x_center = int(x + w / 2)
                 y_center = int(y + h / 2)
                 
                 x_mm = x_size_mm * x_center // width
                 y_mm = y_size_mm - (y_size_mm * y_center // height)
+                
+                frames.append(((x, y, w, h), (x_center, y_center)))
                 
                 centers.append((x_mm, y_mm))
                 
